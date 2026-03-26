@@ -23,5 +23,5 @@ and also creates the Ubuntu autoinstall ISO based on the `UBUNTU_CODENAME` varia
 - copy the files `meta-data` and `user-data` into the root folder of this USB stick
 
 - prepare a second USB stick with the `ubuntu-UBUNTU_CODENAME-autoinstall_DATE.iso`
-- you can use a tool like [Rufus]()
+- you can use a tool like [Rufus](https://rufus.ie/de/#download)
 - for a detailed How-To see Ubuntu Tutorials of [Create a bootable USB stick with Rufus on Windows](https://ubuntu.com/tutorials/create-a-usb-stick-on-windows)
