@@ -84,7 +84,7 @@ autoinstall:
       - id: lv-var
         type: lvm_partition
         name: var
-        size: 2560M
+        size: 3GB
         volgroup: vg-system
       - id: format-var
         type: format
@@ -195,7 +195,7 @@ autoinstall:
       - id: lv-kubelet
         type: lvm_partition
         name: kubelet
-        size: 19GB
+        size: 16GB
         volgroup: vg-kubernetes
       - id: format-kubelet
         type: format
@@ -205,6 +205,21 @@ autoinstall:
         type: mount
         path: /var/lib/kubelet
         device: format-kubelet
+
+      # LV etcd
+      - id: lv-etcd
+        type: lvm_partition
+        name: etcd
+        size: 5GB
+        volgroup: vg-kubernetes
+      - id: format-etcd
+        type: format
+        fstype: xfs
+        volume: lv-etcd
+      - id: mount-etcd
+        type: mount
+        path: /var/lib/etcd
+        device: format-etcd
 
   user-data:
     hostname: k8s-c03
