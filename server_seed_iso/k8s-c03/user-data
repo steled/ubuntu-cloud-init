@@ -84,7 +84,7 @@ autoinstall:
       - id: lv-var
         type: lvm_partition
         name: var
-        size: 2GB
+        size: 2560M
         volgroup: vg-system
       - id: format-var
         type: format
