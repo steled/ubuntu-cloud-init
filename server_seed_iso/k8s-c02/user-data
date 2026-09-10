@@ -272,18 +272,13 @@ autoinstall:
     - sysctl net.ipv6.conf.all.disable_ipv6=1
     - swapoff -a
 
-    # Generic OS-hygiene defaults, independent of whether this node ever becomes
-    # a kubeone-managed Kubernetes node. If it does, kubeone rewrites
-    # /etc/systemd/journald.conf.d/max_disk_use.conf to 5G on every `apply` and
-    # our own `make k1-fix-journald-size` post-step then pins it to 500M - these
-    # write_files entries only matter as the baseline before/without that.
     write_files:
       - path: /etc/systemd/journald.conf.d/max_disk_use.conf
         owner: root:root
         permissions: '0644'
         content: |
           [Journal]
-          SystemMaxUse=300M
+          SystemMaxUse=500M
 
       - path: /etc/logrotate.d/rsyslog
         owner: root:root
