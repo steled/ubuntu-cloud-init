@@ -272,6 +272,44 @@ autoinstall:
     - sysctl net.ipv6.conf.all.disable_ipv6=1
     - swapoff -a
 
+    # Generic OS-hygiene defaults, independent of whether this node ever becomes
+    # a kubeone-managed Kubernetes node. If it does, kubeone rewrites
+    # /etc/systemd/journald.conf.d/max_disk_use.conf to 5G on every `apply` and
+    # our own `make k1-fix-journald-size` post-step then pins it to 500M - these
+    # write_files entries only matter as the baseline before/without that.
+    write_files:
+      - path: /etc/systemd/journald.conf.d/max_disk_use.conf
+        owner: root:root
+        permissions: '0644'
+        content: |
+          [Journal]
+          SystemMaxUse=300M
+
+      - path: /etc/logrotate.d/rsyslog
+        owner: root:root
+        permissions: '0644'
+        content: |
+          /var/log/syslog
+          /var/log/mail.log
+          /var/log/kern.log
+          /var/log/auth.log
+          /var/log/user.log
+          /var/log/cron.log
+          {
+          	rotate 4
+          	su syslog syslog
+          	weekly
+          	size 20M
+          	missingok
+          	notifempty
+          	compress
+          	delaycompress
+          	sharedscripts
+          	postrotate
+          		/usr/lib/rsyslog/rsyslog-rotate
+          	endscript
+          }
+
     runcmd:
       - echo "AuthorizedKeysFile      .ssh/authorized_keys .ssh/authorized_keys2" | sudo tee -a /etc/ssh/sshd_config.d/custom_sshd.conf
       - echo "PubkeyAuthentication yes" | sudo tee -a tee -a /etc/ssh/sshd_config.d/custom_sshd.conf
@@ -283,7 +321,6 @@ autoinstall:
       - echo '       PasswordAuthentication yes' | sudo tee -a /etc/ssh/sshd_config.d/custom_sshd.conf
       - groupmod -g 500 steled
       - chown steled:steled -R ~/
-      - sed -i s/5G/250M/ /etc/systemd/journald.conf.d/max_disk_use.conf
       # needed for longhorn
       - sudo systemctl stop multipathd
       - sudo systemctl stop multipathd.socket
